@@ -22,6 +22,34 @@ namespace Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Infrastructure.Entities.ContactEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Service")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Contact");
+                });
+
             modelBuilder.Entity("Infrastructure.Entities.CourseEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -78,27 +106,53 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("AdvertisingUpdates")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("AdvertisingUpdates")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("DailyNewsletter")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("DailyNewsletter")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("EventUpdates")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("EventUpdates")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("Podcasts")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("Podcasts")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("StartupsWeekly")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("StartupsWeekly")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("WeekinReview")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("WeekinReview")
+                        .HasColumnType("bit");
 
                     b.HasKey("Email");
 
                     b.ToTable("Subscribers");
+                });
+
+            modelBuilder.Entity("Infrastructure.Entities.UserEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }

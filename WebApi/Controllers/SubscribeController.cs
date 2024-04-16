@@ -2,11 +2,13 @@
 using Infrastructure.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebApi.Filters;
 
 namespace ASPNET.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[UseApiKey]
 public class SubscribeController(ApiContexts context) : ControllerBase
 {
 
@@ -15,12 +17,11 @@ public class SubscribeController(ApiContexts context) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Subscribe(SubscribersEntity entity)
     {
-        if(!ModelState.IsValid){
+        if (!ModelState.IsValid) {
             return BadRequest();
         }
-
-        else{
-            if(await _context.Subscribers.AnyAsync(x => x.Email == entity.Email)){
+        else {
+            if (await _context.Subscribers.AnyAsync(x => x.Email == entity.Email)) {
                 return Conflict();
             }
             else
@@ -33,26 +34,20 @@ public class SubscribeController(ApiContexts context) : ControllerBase
 
     }
 
-    [HttpDelete]
+
+    [HttpDelete("{email}")]
     public async Task<IActionResult> Unsubscribe(string email)
     {
-        if (!ModelState.IsValid)
+        var subscriber = await _context.Subscribers.FirstOrDefaultAsync(x => x.Email == email);
+
+        if (subscriber == null)
         {
-            return BadRequest();
+            return NotFound();
         }
 
-        else
-        {
-            
-            var subscriberEntity = await _context.Subscribers.FirstOrDefaultAsync(x => x.Email == email);
-            if (subscriberEntity == null) 
-            {
-                return NotFound();
-            }
+        _context.Subscribers.Remove(subscriber);
+        await _context.SaveChangesAsync();
 
-            _context.Remove(subscriberEntity);
-            await _context.SaveChangesAsync();
-            return Ok();
-        }
+        return NoContent();
     }
 }

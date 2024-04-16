@@ -4,13 +4,13 @@ namespace Infrastructure.Entities;
 
 public class SubscribersEntity
 {
-
     [Key]
+    [Required]
     public string Email { get; set; } = null!;
-    public string? DailyNewsletter { get; set; }
-    public string? AdvertisingUpdates { get; set; }
-    public string? WeekinReview { get; set; }
-    public string? EventUpdates { get; set; }
-    public string? StartupsWeekly { get; set; }
-    public string? Podcasts { get; set; }
+    public bool DailyNewsletter { get; set; }
+    public bool AdvertisingUpdates { get; set; }
+    public bool WeekinReview { get; set; }
+    public bool EventUpdates { get; set; }
+    public bool StartupsWeekly { get; set; }
+    public bool Podcasts { get; set; }
 }
