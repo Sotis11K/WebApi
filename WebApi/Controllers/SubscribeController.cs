@@ -15,6 +15,7 @@ public class SubscribeController(ApiContexts context) : ControllerBase
     private readonly ApiContexts _context = context;
 
     [HttpPost]
+    [UseApiKey]
     public async Task<IActionResult> Subscribe(SubscribersEntity entity)
     {
         if (!ModelState.IsValid) {
@@ -35,7 +36,10 @@ public class SubscribeController(ApiContexts context) : ControllerBase
     }
 
 
+
     [HttpDelete("{email}")]
+    [UseApiKey]
+
     public async Task<IActionResult> Unsubscribe(string email)
     {
         var subscriber = await _context.Subscribers.FirstOrDefaultAsync(x => x.Email == email);

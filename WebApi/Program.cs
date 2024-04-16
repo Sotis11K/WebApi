@@ -4,20 +4,18 @@ using WebApi.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
+
+
+
 builder.Services.AddSwaggerGen();
 
-/*builder.Services.AddCors(x =>
-{
-    x.AddPolicy("CustomOriginPolicy", policy =>
-    {
-        policy.WithOrigins("http://127.0.0.1:5500")
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-    });
-});*/
 
 
 builder.Services.RegisterSwagger();
+
+
+
+
 builder.Services.RegisterJwt(builder.Configuration);
 
 
