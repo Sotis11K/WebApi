@@ -1,5 +1,9 @@
-﻿using Infrastructure.Contexts;
+﻿
+
+using Infrastructure.Contexts;
 using Infrastructure.Entities;
+using Infrastructure.Factories;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,19 +18,46 @@ public class CoursesController(ApiContexts context) : ControllerBase
     private readonly ApiContexts _context = context;
     [HttpGet]
     [UseApiKey]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(string category = "", string searchQuery = "", int pageNumber = 1, int pageSize = 10)
     {
-        var courses = await _context.Courses.ToListAsync();
-        if(courses == null)
+
+        var query = _context.Courses.Include(i => i.Category).AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(category) && category != "all")
         {
-            return NotFound();
+            query = query.Where(x => x.Category!.CategoryName == category);
         }
-        return Ok(courses);
+
+        if (!string.IsNullOrEmpty(searchQuery))
+        {
+            query = query.Where(x => x.Title.Contains(searchQuery) || x.Author.Contains(searchQuery));
+        }
+
+
+        query = query.OrderByDescending(o => o.Id);
+
+        var courses = await query.ToListAsync();
+
+
+        var response = new CourseResult
+        {
+            Succeeded = true,
+            TotalItems = await query.CountAsync(),
+        };
+
+        response.TotalPages = (int)Math.Ceiling(response.TotalItems / (double)pageSize);
+        response.Courses = CourseFactory.Create(await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync()); 
+
+
+
+
+        return Ok(response);
     }
 
 
     [HttpGet("{id}")]
     [UseApiKey]
+
     public async Task<IActionResult> GetOne(int id)
     {
         var course = await _context.Courses.FindAsync(id);
@@ -84,16 +115,15 @@ public class CoursesController(ApiContexts context) : ControllerBase
         course.Hours = updatedCourse.Hours ?? course.Hours;
         course.LikesInProcent = updatedCourse.LikesInProcent ?? course.LikesInProcent;
         course.LikesInNumbers = updatedCourse.LikesInNumbers ?? course.LikesInNumbers;
-        course.CategoryName = updatedCourse.CategoryName ?? course.CategoryName;
 
         _context.Courses.Update(course);
         await _context.SaveChangesAsync();
         return Ok(course);
     }
 
-    
 
-    [HttpPut]
+
+    [HttpDelete]
     [UseApiKey]
     [Authorize]
     public async Task<IActionResult> DeleteCourse(int id)
@@ -111,5 +141,3 @@ public class CoursesController(ApiContexts context) : ControllerBase
         return Ok(course);
     }
 }
-
-

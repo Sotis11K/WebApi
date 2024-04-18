@@ -1,10 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Infrastructure.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Infrastructure.Entities;
+namespace Infrastructure.Models;
 
-public class CourseEntity
+public class Course
 {
-    [Key]
     public int Id { get; set; }
     public bool? IsBestSeller { get; set; }
     public string Image { get; set; } = null!;
@@ -16,6 +20,5 @@ public class CourseEntity
     public string Hours { get; set; } = null!;
     public string LikesInProcent { get; set; } = null!;
     public string LikesInNumbers { get; set; } = null!;
-    public int? CategoryId { get; set; } = null;
-    public CategoriesEntity? Category { get; set; }
+    public string Category { get; set; } = null!;
 }
